@@ -1,0 +1,25 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: your-workload
+spec:
+  build:
+    script: |
+      #!/bin/bash
+      set -e
+
+      # Your code checks go here
+      echo "Running code checks..."
+
+      # Example: Run a linter
+      golangci-lint run
+
+      # Your build steps go here
+      echo "Building the application..."
+      ./build.sh
+
+  source:
+    image: your-dockerhub-username/your-app:latest
+  deploy:
+    script: ./deploy.sh
+

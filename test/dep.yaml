@@ -1,0 +1,22 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  labels:
+    app.kubernetes.io/part-of: tanzu-java-web-app
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+    apps.tanzu.vmware.com/has-tests: "true"
+    apps.tanzu.vmware.com/workload-type: web
+  name: tanzu-java-web-app-nathan
+  namespace: default
+spec:
+  build:
+    env:
+    - name: BP_JVM_VERSION
+      value: "11"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    image: index.docker.io/nathanledall/spring-boot-app:latest@sha256:dc3293012e817ec988d16c8f312dab696b422daec8c1094e9418d521d5491a45
+
