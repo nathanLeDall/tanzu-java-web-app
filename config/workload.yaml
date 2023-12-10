@@ -1,35 +1,23 @@
 apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
-  name: tanzu-java-web-app-nathan
+  name: tanzu-java-web-app
   labels:
     apps.tanzu.vmware.com/workload-type: web
     apps.tanzu.vmware.com/has-tests: "true"
     apps.tanzu.vmware.com/auto-configure-actuators: "true"
-    app.kubernetes.io/part-of: tanzu-java-web-app-nathan
+    app.kubernetes.io/part-of: tanzu-java-web-app
 spec:
-  params:
-  - name: live-update
-    value: "true"
   build:
-    - name: comp
-      image: maven:3.8.4-openjdk-11
-      script:
-      - mvn clean install
-
-    - name: buildx-create
-      image: docker:20.10.9
-      script:
-      - docker buildx create --use
-
-    - name: build-and-push-image
-      image: docker:20.10.9
-      script:
-      - docker buildx build --platform linux/amd64,linux/arm64,mac/arm64 -t nathanledall/spring-boot-app:latest .
-      - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-      - docker push nathanledall/spring-boot-app:latest
-
-    - name: deploy-to-kubernetes
-      image: bitnami/kubectl:1.22.2
-      script:
-      - kubectl apply -f your-tanzu-run-workload.yaml
+    env:
+      - name: BP_JVM_VERSION
+        value: "11"
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  source:
+    git:
+      url: https://github.com/nathanLeDall/tanzu-java-web-app
+      ref:
+        branch: main
